@@ -1,54 +1,45 @@
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: mysql
-  #namespace: expense
-  # these labels are deployment related labels
-  labels:
-    component: mysql
-    project: expense
-    tier: db
+  name: flask
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      component: mysql
-      project: expense
-      tier: db
-  # pod definition
+      app: flask
   template:
     metadata:
       labels:
-        component: mysql
-        project: expense
-        tier: db
+        app: flask
     spec:
       containers:
-      - name: mysql
-        image: vijaysai1718/mysql
-        readinessProbe:
-          tcpSocket:
-            port: 3306
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        livenessProbe:
-          tcpSocket:
-            port: 3306
-          initialDelaySeconds: 10
-          periodSeconds: 5
-
+      - name: flask
+        image: vijaysai1718/devopsexam
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_APP
+          value: app.py
+        - name: FLASK_ENV
+          value: production
+        - name: MYSQL_HOST
+          value: mysql
+        - name: MYSQL_USER
+          value: root
+        - name: MYSQL_PASSWORD
+          value: rootpass
+        - name: MYSQL_DATABASE
+          value: devops_exam
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
-  #namespace: expense
+  name: flask-service
 spec:
   selector:
-    component: mysql
-    project: expense
-    tier: db
+    app: flask
   ports:
-  - protocol: TCP
-    port: 3306 #service-port
-    targetPort: 3306 #target-port
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer  # Or LoadBalancer if on cloud

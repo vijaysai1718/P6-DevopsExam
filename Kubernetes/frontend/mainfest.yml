@@ -1,53 +1,58 @@
-kind: Deployment
-apiVersion: apps/v1
+=apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: backend
-  #namespace: expense
-  # these labels are deployment related labels
-  labels:
-    component: backend
-    project: expense
-    tier: app
+  name: mysql-pvc
 spec:
-  replicas: 2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
   selector:
     matchLabels:
-      component: backend
-      project: expense
-      tier: app
-  # pod definition
+      app: mysql
   template:
     metadata:
       labels:
-        component: backend
-        project: expense
-        tier: app
+        app: mysql
     spec:
-     containers:
-      - name: backend
-        image: vijaysai1718/devopsexam
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "150m"
-            memory: "256Mi"
-
-
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpass"
+        - name: MYSQL_DATABASE
+          value: "devops_exam"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+      - name: init-script
+        configMap:
+          name: mysql-initdb
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
-  #namespace: expense
+  name: mysql
 spec:
-  type: LoadBalancer
   selector:
-    component: backend
-    project: expense
-    tier: app
+    app: mysql
   ports:
-  - protocol: TCP
-    port: 5000 #service-port
-    targetPort: 5000 #target-port
+    - port: 3306
+      targetPort: 3306
