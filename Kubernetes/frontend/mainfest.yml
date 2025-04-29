@@ -25,7 +25,7 @@ spec:
     spec:
      containers:
       - name: backend
-        image: joindevops/backend:v1.0
+        image: vijaysai1718/devopsexam
         resources:
           requests:
             cpu: "100m"
