@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:5.7
+        image: vijaysai1718/mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "rootpass"
@@ -25,6 +25,21 @@ spec:
         volumeMounts:
         - name: mysql-storage
           mountPath: /var/lib/mysql
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-storage
-        emptyDir: {}  # <-- Temporary
+        emptyDir: {}  # Use PVC in production
+      - name: init-script
+        emptyDir: {}  # Placeholder if init scripts are prebuilt in image
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
