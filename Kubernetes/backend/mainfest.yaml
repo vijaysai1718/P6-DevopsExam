@@ -20,6 +20,8 @@ spec:
           env:
              - name: MYSQL_ROOT_PASSWORD
                value: rootpass
+             - name: MYSQL_DATABASE
+               value: devops_exam
 ---
 apiVersion: v1
 kind: Service
