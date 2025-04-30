@@ -17,6 +17,9 @@ spec:
           image: vijaysai1718/devopsexam  # replace with your custom image 
           ports:
             - containerPort: 5000
+          env:
+           - name: MYSQL_HOST
+             value: mysql 
 ---
 apiVersion: v1
 kind: Service
