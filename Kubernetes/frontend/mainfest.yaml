@@ -18,6 +18,10 @@ spec:
           ports:
             - containerPort: 5000
           env:
+           - name: FLASK_APP
+             value: app.py
+           - name: FLASK_ENV
+             value: production
            - name: MYSQL_HOST
              value: mysql 
            - name: MYSQL_USER
