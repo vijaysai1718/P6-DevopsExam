@@ -20,6 +20,12 @@ spec:
           env:
            - name: MYSQL_HOST
              value: mysql 
+           - name: MYSQL_USER
+             value: root
+           - name: MYSQL_PASSWORD
+             value: rootpass
+           - name: MYSQL_DATABASE
+             value: devops_exam
 ---
 apiVersion: v1
 kind: Service
