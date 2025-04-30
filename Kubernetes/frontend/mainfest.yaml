@@ -1,44 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask
+  name: devopsexamapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flask
+      app: devopsexamapp
   template:
     metadata:
       labels:
-        app: flask
+        app: devopsexamapp
     spec:
       containers:
-        - name: flask
+        - name: devopsexamapp
           image: vijaysai1718/devopsexam  # replace with your custom image 
           ports:
             - containerPort: 5000
-          env:
-            - name: FLASK_APP
-              value: app.py
-            - name: FLASK_ENV
-              value: production
-            - name: MYSQL_HOST
-              value: mysql  # MySQL service name
-            - name: MYSQL_USER
-              value: root
-            - name: MYSQL_PASSWORD
-              value: rootpass
-            - name: MYSQL_DATABASE
-              value: devops_exam
-          # No persistent volumes used here
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-service
+  name: devopsexamappservice
 spec:
   selector:
-    app: flask
+    app: devopsexamapp
   ports:
     - port: 80
       targetPort: 5000
