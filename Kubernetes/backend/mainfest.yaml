@@ -1,44 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask
+  name: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flask
+      app: mysql
   template:
     metadata:
       labels:
-        app: flask
+        app: mysql
     spec:
       containers:
-      - name: flask
-        image: vijaysai1718/devopsexam
-        ports:
-        - containerPort: 5000
-        env:
-        - name: FLASK_APP
-          value: app.py
-        - name: FLASK_ENV
-          value: production
-        - name: MYSQL_HOST
-          value: mysql
-        - name: MYSQL_USER
-          value: root
-        - name: MYSQL_PASSWORD
-          value: rootpass
-        - name: MYSQL_DATABASE
-          value: devops_exam
+        - name: mysql
+          image: vijaysai1718/mysql  # your custom image
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: rootpass
+            - name: MYSQL_DATABASE
+              value: devops_exam
+          # NOTE: no volumeMounts section here
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-service
+  name: mysql
 spec:
   selector:
-    app: flask
-  type: LoadBalancer
+    app: mysql
   ports:
-  - port: 80
-    targetPort: 5000
+    - port: 3306
+      targetPort: 3306
+

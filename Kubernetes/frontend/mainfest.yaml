@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: flask
+          image: vijaysai1718/devopsexam  # replace with your custom image 
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_APP
+              value: app.py
+            - name: FLASK_ENV
+              value: production
+            - name: MYSQL_HOST
+              value: mysql  # MySQL service name
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: rootpass
+            - name: MYSQL_DATABASE
+              value: devops_exam
+          # No persistent volumes used here
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  selector:
+    app: flask
+  ports:
+    - port: 80
+      targetPort: 5000
+  type: LoadBalancer  # or ClusterIP if you don't need external access
+
