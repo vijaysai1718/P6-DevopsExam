@@ -14,15 +14,9 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: vijaysai1718/mysql  # your custom image
+          image: vijaysai1718/mysql
           ports:
             - containerPort: 3306
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: rootpass
-            - name: MYSQL_DATABASE
-              value: devops_exam
-          # NOTE: no volumeMounts section here
 ---
 apiVersion: v1
 kind: Service
