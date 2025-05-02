@@ -1,3 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi  # Ensure this matches your PVC request
+  accessModes:
+    - ReadWriteOnce  # Ensure this matches your PVC access mode
+  persistentVolumeReclaimPolicy: Retain  # Can also be "Delete" depending on your need
+  storageClassName: standard  # Ensure this matches your PVC storage class
+  hostPath:
+    path: /mnt/data/mysql  # This is for local storage, change it based on your setup
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce  # Ensure this matches your PV access mode
+  resources:
+    requests:
+      storage: 1Gi  # Must match the PV storage size
+  storageClassName: standard  # Must match the PV storage class
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,15 +42,31 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: vijaysai1718/mysql
+          image: vijaysai1718/mysql  # Your custom MySQL image
           ports:
             - containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: rootpass
+              value: rootpass  # MySQL root password
             - name: MYSQL_DATABASE
-              value: devops_exam
+              value: devops_exam  # Database to create
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql  # MySQL data path
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc  # Linking PVC to the volume
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+  clusterIP: None  # Headless service for direct pod-to-pod communication
